@@ -515,9 +515,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         
         for (var transaction in filteredTransactions) {
           if (transaction.isIncome) {
-            totalIncome += transaction.amount;
+            totalIncome = totalIncome + transaction.amount;
           } else {
-            totalExpense += transaction.amount;
+            totalExpense = totalExpense + transaction.amount;
             
             // Category breakdown (only for expenses)
             final categoryName = transaction.category.name;

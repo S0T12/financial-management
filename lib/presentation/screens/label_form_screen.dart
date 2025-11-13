@@ -64,8 +64,8 @@ class _LabelFormScreenState extends ConsumerState<LabelFormScreen> {
     _isEditing = widget.label != null;
     _nameController = TextEditingController(text: widget.label?.name ?? '');
     if (widget.label != null) {
-      _selectedColor = widget.label!.color;
-      _selectedIcon = widget.label!.icon;
+      _selectedColor = widget.label!.getColor();
+      _selectedIcon = widget.label!.getIcon();
     }
   }
   
@@ -265,8 +265,8 @@ class _LabelFormScreenState extends ConsumerState<LabelFormScreen> {
     final label = TransactionLabel(
       id: widget.label?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       name: _nameController.text.trim(),
-      color: _selectedColor,
-      icon: _selectedIcon,
+      color: TransactionLabel.colorToString(_selectedColor),
+      icon: TransactionLabel.iconToString(_selectedIcon),
       createdAt: widget.label?.createdAt ?? DateTime.now(),
       updatedAt: DateTime.now(),
     );
