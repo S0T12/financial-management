@@ -31,7 +31,14 @@ ANDROID_BUILD_TOOLS_VERSION="34.0.0"
 ANDROID_PLATFORM_VERSION="34"
 
 # Paths
-HOME_DIR="$HOME"
+if [ "$EUID" -eq 0 ]; then
+    # Running as root
+    HOME_DIR="/root"
+    INSTALL_USER="root"
+else
+    HOME_DIR="$HOME"
+    INSTALL_USER="$USER"
+fi
 FLUTTER_DIR="$HOME_DIR/flutter"
 ANDROID_SDK_DIR="$HOME_DIR/android-sdk"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -120,7 +127,7 @@ if [ "$RUNNING_AS_ROOT" = true ]; then
         xz-utils \
         zip \
         libglu1-mesa \
-        openjdk-17-jdk \
+        default-jdk \
         wget \
         clang \
         cmake \
@@ -128,7 +135,10 @@ if [ "$RUNNING_AS_ROOT" = true ]; then
         pkg-config \
         libgtk-3-dev \
         liblzma-dev \
-        libstdc++-12-dev
+        libstdc++-13-dev \
+        file \
+        apt-transport-https \
+        ca-certificates
 else
     sudo apt-get install -y \
         curl \
@@ -137,7 +147,7 @@ else
         xz-utils \
         zip \
         libglu1-mesa \
-        openjdk-17-jdk \
+        default-jdk \
         wget \
         clang \
         cmake \
@@ -145,7 +155,10 @@ else
         pkg-config \
         libgtk-3-dev \
         liblzma-dev \
-        libstdc++-12-dev
+        libstdc++-13-dev \
+        file \
+        apt-transport-https \
+        ca-certificates
 fi
 
 print_success "System dependencies installed"
