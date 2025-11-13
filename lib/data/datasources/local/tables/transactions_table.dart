@@ -34,10 +34,10 @@ extension TransactionModelExtension on TransactionModel {
     return Transaction(
       id: id,
       amount: amount,
-      type: TransactionType.values[type],
+      type: type,
       accountId: accountId,
       dateTime: transactionDate,
-      category: TransactionCategory.values[category],
+      category: category,
       note: note,
       imagePath: imagePath,
       smsId: smsId,

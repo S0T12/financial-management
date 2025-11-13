@@ -25,7 +25,7 @@ extension AccountModelExtension on AccountModel {
     return Account(
       id: id,
       name: name,
-      type: AccountType.values[type],
+      type: type,
       balance: balance,
       description: description,
       color: color,
