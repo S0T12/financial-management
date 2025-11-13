@@ -5,6 +5,7 @@ import 'package:financial_management/domain/entities/account.dart';
 import 'package:financial_management/domain/entities/transaction.dart';
 import 'package:financial_management/presentation/screens/account_form_screen.dart';
 import 'package:financial_management/presentation/screens/accounts_list_screen.dart';
+import 'package:financial_management/presentation/screens/labels_list_screen.dart';
 import 'package:financial_management/presentation/screens/reports_screen.dart';
 import 'package:financial_management/presentation/screens/transaction_form_screen.dart';
 import 'package:financial_management/presentation/screens/transactions_list_screen.dart';
@@ -53,11 +54,45 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             },
             tooltip: context.tr('reports'),
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              ref.read(dashboardViewModelProvider.notifier).refresh();
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              switch (value) {
+                case 'labels':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LabelsListScreen(),
+                    ),
+                  );
+                  break;
+                case 'refresh':
+                  ref.read(dashboardViewModelProvider.notifier).refresh();
+                  break;
+              }
             },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'labels',
+                child: Row(
+                  children: [
+                    const Icon(Icons.label_outline),
+                    const SizedBox(width: 12),
+                    Text(context.tr('labels')),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'refresh',
+                child: Row(
+                  children: [
+                    const Icon(Icons.refresh),
+                    const SizedBox(width: 12),
+                    Text(context.tr('refresh')),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
