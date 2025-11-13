@@ -8,7 +8,7 @@ class Transactions extends Table {
   TextColumn get id => text()();
   IntColumn get amount => integer()();
   IntColumn get type => intEnum<TransactionType>()();
-  TextColumn get accountId => text().references(Accounts, #id, onDelete: KeyAction.cascade)();
+  TextColumn get accountId => text().customConstraint('REFERENCES accounts(id) ON DELETE CASCADE')();
   DateTimeColumn get dateTime => dateTime()();
   IntColumn get category => intEnum<TransactionCategory>()();
   TextColumn get note => text().nullable()();
