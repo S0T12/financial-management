@@ -15,6 +15,7 @@ class Transaction extends Equatable {
   final String? note;
   final String? imagePath;
   final String? smsId;
+  final List<String>? labelIds;
   final DateTime createdAt;
   final DateTime updatedAt;
   
@@ -28,6 +29,7 @@ class Transaction extends Equatable {
     this.note,
     this.imagePath,
     this.smsId,
+    this.labelIds,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -45,6 +47,7 @@ class Transaction extends Equatable {
     String? note,
     String? imagePath,
     String? smsId,
+    List<String>? labelIds,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -58,6 +61,7 @@ class Transaction extends Equatable {
       note: note ?? this.note,
       imagePath: imagePath ?? this.imagePath,
       smsId: smsId ?? this.smsId,
+      labelIds: labelIds ?? this.labelIds,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -74,6 +78,7 @@ class Transaction extends Equatable {
     note,
     imagePath,
     smsId,
+    labelIds,
     createdAt,
     updatedAt,
   ];

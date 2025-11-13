@@ -5,6 +5,7 @@ import 'package:financial_management/domain/entities/account.dart';
 import 'package:financial_management/domain/entities/transaction.dart';
 import 'package:financial_management/presentation/screens/account_form_screen.dart';
 import 'package:financial_management/presentation/screens/accounts_list_screen.dart';
+import 'package:financial_management/presentation/screens/reports_screen.dart';
 import 'package:financial_management/presentation/screens/transaction_form_screen.dart';
 import 'package:financial_management/presentation/screens/transactions_list_screen.dart';
 import 'package:financial_management/presentation/viewmodels/dashboard_viewmodel.dart';
@@ -40,6 +41,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       appBar: AppBar(
         title: Text(context.tr('dashboard')),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.assessment),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ReportsScreen(),
+                ),
+              );
+            },
+            tooltip: context.tr('reports'),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
