@@ -89,8 +89,13 @@ fi
 
 # Check if running as root
 if [ "$EUID" -eq 0 ]; then 
-    print_error "Please do not run this script as root"
-    exit 1
+    print_warning "Running as root - this is not recommended but will continue"
+    print_info "Some operations will be adjusted for root user"
+    # Set HOME to /root if not set
+    export HOME="${HOME:-/root}"
+    RUNNING_AS_ROOT=true
+else
+    RUNNING_AS_ROOT=false
 fi
 
 ################################################################################
@@ -100,25 +105,48 @@ fi
 print_header "Installing System Dependencies"
 
 print_info "Updating package lists..."
-sudo apt-get update
+if [ "$RUNNING_AS_ROOT" = true ]; then
+    apt-get update
+else
+    sudo apt-get update
+fi
 
 print_info "Installing required packages..."
-sudo apt-get install -y \
-    curl \
-    git \
-    unzip \
-    xz-utils \
-    zip \
-    libglu1-mesa \
-    openjdk-17-jdk \
-    wget \
-    clang \
-    cmake \
-    ninja-build \
-    pkg-config \
-    libgtk-3-dev \
-    liblzma-dev \
-    libstdc++-12-dev
+if [ "$RUNNING_AS_ROOT" = true ]; then
+    apt-get install -y \
+        curl \
+        git \
+        unzip \
+        xz-utils \
+        zip \
+        libglu1-mesa \
+        openjdk-17-jdk \
+        wget \
+        clang \
+        cmake \
+        ninja-build \
+        pkg-config \
+        libgtk-3-dev \
+        liblzma-dev \
+        libstdc++-12-dev
+else
+    sudo apt-get install -y \
+        curl \
+        git \
+        unzip \
+        xz-utils \
+        zip \
+        libglu1-mesa \
+        openjdk-17-jdk \
+        wget \
+        clang \
+        cmake \
+        ninja-build \
+        pkg-config \
+        libgtk-3-dev \
+        liblzma-dev \
+        libstdc++-12-dev
+fi
 
 print_success "System dependencies installed"
 
