@@ -45,22 +45,3 @@ extension TransactionModelExtension on TransactionModel {
     );
   }
 }
-
-/// Extension to convert domain entity to database companion
-extension TransactionEntityExtension on Transaction {
-  TransactionsCompanion toCompanion() {
-    return TransactionsCompanion(
-      id: Value(id),
-      amount: Value(amount),
-      type: Value(type.index),
-      accountId: Value(accountId),
-      transactionDate: Value(dateTime),
-      category: Value(category.index),
-      note: Value(note),
-      imagePath: Value(imagePath),
-      smsId: Value(smsId),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-    );
-  }
-}

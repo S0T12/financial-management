@@ -31,18 +31,3 @@ extension TransferModelExtension on TransferModel {
     );
   }
 }
-
-/// Extension to convert domain entity to database companion
-extension TransferEntityExtension on Transfer {
-  TransfersCompanion toCompanion() {
-    return TransfersCompanion(
-      id: Value(id),
-      fromAccountId: Value(fromAccountId),
-      toAccountId: Value(toAccountId),
-      amount: Value(amount),
-      note: Value(note),
-      transferDate: Value(dateTime),
-      createdAt: Value(createdAt),
-    );
-  }
-}

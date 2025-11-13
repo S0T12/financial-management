@@ -33,19 +33,3 @@ extension AccountModelExtension on AccountModel {
     );
   }
 }
-
-/// Extension to convert domain entity to database companion
-extension AccountEntityExtension on Account {
-  AccountsCompanion toCompanion() {
-    return AccountsCompanion(
-      id: Value(id),
-      name: Value(name),
-      type: Value(type.index),
-      balance: Value(balance),
-      description: Value(description),
-      color: Value(color),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-    );
-  }
-}
