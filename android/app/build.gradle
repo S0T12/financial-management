@@ -4,6 +4,17 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// Fix for telephony plugin namespace issue
+project.afterEvaluate {
+    project.rootProject.allprojects { proj ->
+        proj.afterEvaluate {
+            if (proj.name == 'telephony' && !proj.android.namespace) {
+                proj.android.namespace = 'com.shounakmulay.telephony'
+            }
+        }
+    }
+}
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -24,7 +35,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.financial_management"
-    compileSdk 34
+    compileSdk 36
     ndkVersion flutter.ndkVersion
 
     compileOptions {
