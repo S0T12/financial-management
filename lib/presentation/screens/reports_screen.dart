@@ -478,7 +478,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   }
   
   Future<AdvancedReportData> _generateReport() async {
-    final transactionsResult = await ref.read(getRecentTransactionsUseCaseProvider(1000));
+    final getRecentTransactions = ref.read(getRecentTransactionsProvider);
+    final transactionsResult = await getRecentTransactions(const GetRecentTransactionsParams(limit: 1000));
     
     return transactionsResult.fold(
       (failure) => const AdvancedReportData(
@@ -509,27 +510,29 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         // Calculate statistics
         int totalIncome = 0;
         int totalExpense = 0;
-        Map<String, int> categoryBreakdown = {};
-        Map<String, int> accountBreakdown = {};
-        Map<String, int> dailyTrend = {};
+        final Map<String, int> categoryBreakdown = {};
+        final Map<String, int> accountBreakdown = {};
+        final Map<String, int> dailyTrend = {};
         
         for (var transaction in filteredTransactions) {
+          final int transactionAmount = transaction.amount;
+          
           if (transaction.isIncome) {
-            totalIncome = totalIncome + transaction.amount;
+            totalIncome += transactionAmount;
           } else {
-            totalExpense = totalExpense + transaction.amount;
+            totalExpense += transactionAmount;
             
             // Category breakdown (only for expenses)
             final categoryName = transaction.category.name;
-            categoryBreakdown[categoryName] = (categoryBreakdown[categoryName] ?? 0) + transaction.amount;
+            categoryBreakdown[categoryName] = (categoryBreakdown[categoryName] ?? 0) + transactionAmount;
           }
           
           // Account breakdown
-          accountBreakdown[transaction.accountId] = (accountBreakdown[transaction.accountId] ?? 0) + transaction.amount;
+          accountBreakdown[transaction.accountId] = (accountBreakdown[transaction.accountId] ?? 0) + transactionAmount;
           
           // Daily trend
           final dayKey = DateFormat('yyyy-MM-dd').format(transaction.dateTime);
-          dailyTrend[dayKey] = (dailyTrend[dayKey] ?? 0) + transaction.amount;
+          dailyTrend[dayKey] = (dailyTrend[dayKey] ?? 0) + transactionAmount;
         }
         
         return AdvancedReportData(
