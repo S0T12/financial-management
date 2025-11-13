@@ -6,12 +6,16 @@ import 'package:financial_management/presentation/widgets/transaction_list_item.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TransactionsListScreen extends ConsumerWidget {
+class TransactionsListScreen extends ConsumerStatefulWidget {
   const TransactionsListScreen({super.key});
   
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final transactionsAsync = ref.watch(getRecentTransactionsUseCaseProvider(100).future);
+  ConsumerState<TransactionsListScreen> createState() => _TransactionsListScreenState();
+}
+
+class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen> {
+  @override
+  Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
     
     return Scaffold(
@@ -19,14 +23,14 @@ class TransactionsListScreen extends ConsumerWidget {
         title: Text(context.tr('transactions')),
       ),
       body: FutureBuilder(
-        future: transactionsAsync,
+        future: ref.read(getRecentTransactionsProvider)(const GetRecentTransactionsParams(limit: 100)),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           
-          return snapshot.data?.fold(
-            (failure) => Center(
+          if (snapshot.hasError) {
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -38,6 +42,10 @@ class TransactionsListScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+            );
+          }
+          
+          return snapshot.data?.fold(
             ),
             (transactions) {
               if (transactions.isEmpty) {
@@ -67,8 +75,8 @@ class TransactionsListScreen extends ConsumerWidget {
                               builder: (context) => const TransactionFormScreen(),
                             ),
                           );
-                          if (result == true) {
-                            ref.invalidate(getRecentTransactionsUseCaseProvider(100));
+                          if (result == true && mounted) {
+                            setState(() {});
                           }
                         },
                         icon: const Icon(Icons.add),
@@ -94,8 +102,8 @@ class TransactionsListScreen extends ConsumerWidget {
                           builder: (context) => TransactionFormScreen(transaction: transaction),
                         ),
                       );
-                      if (result == true) {
-                        ref.invalidate(getRecentTransactionsUseCaseProvider(100));
+                      if (result == true && mounted) {
+                        setState(() {});
                       }
                     },
                   );
@@ -113,8 +121,8 @@ class TransactionsListScreen extends ConsumerWidget {
               builder: (context) => const TransactionFormScreen(),
             ),
           );
-          if (result == true) {
-            ref.invalidate(getRecentTransactionsUseCaseProvider(100));
+          if (result == true && mounted) {
+            setState(() {});
           }
         },
         child: const Icon(Icons.add),

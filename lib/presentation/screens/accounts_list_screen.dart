@@ -1,4 +1,5 @@
 import 'package:financial_management/core/localization/app_localizations.dart';
+import 'package:financial_management/core/usecases/usecase.dart';
 import 'package:financial_management/domain/usecases/account/get_all_accounts.dart';
 import 'package:financial_management/presentation/providers/app_providers.dart';
 import 'package:financial_management/presentation/screens/account_form_screen.dart';
@@ -6,12 +7,16 @@ import 'package:financial_management/presentation/widgets/account_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AccountsListScreen extends ConsumerWidget {
+class AccountsListScreen extends ConsumerStatefulWidget {
   const AccountsListScreen({super.key});
   
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final accountsAsync = ref.watch(getAllAccountsUseCaseProvider.future);
+  ConsumerState<AccountsListScreen> createState() => _AccountsListScreenState();
+}
+
+class _AccountsListScreenState extends ConsumerState<AccountsListScreen> {
+  @override
+  Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
     
     return Scaffold(
@@ -19,10 +24,26 @@ class AccountsListScreen extends ConsumerWidget {
         title: Text(context.tr('accounts')),
       ),
       body: FutureBuilder(
-        future: accountsAsync,
+        future: ref.read(getAllAccountsProvider)(NoParams()),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          }
+          
+          if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    context.tr('error_loading_accounts'),
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            );
           }
           
           return snapshot.data?.fold(
@@ -67,8 +88,8 @@ class AccountsListScreen extends ConsumerWidget {
                               builder: (context) => const AccountFormScreen(),
                             ),
                           );
-                          if (result == true) {
-                            ref.invalidate(getAllAccountsUseCaseProvider);
+                          if (result == true && mounted) {
+                            setState(() {});
                           }
                         },
                         icon: const Icon(Icons.add),
@@ -96,8 +117,8 @@ class AccountsListScreen extends ConsumerWidget {
                             builder: (context) => AccountFormScreen(account: account),
                           ),
                         );
-                        if (result == true) {
-                          ref.invalidate(getAllAccountsUseCaseProvider);
+                        if (result == true && mounted) {
+                          setState(() {});
                         }
                       },
                     ),
@@ -116,8 +137,8 @@ class AccountsListScreen extends ConsumerWidget {
               builder: (context) => const AccountFormScreen(),
             ),
           );
-          if (result == true) {
-            ref.invalidate(getAllAccountsUseCaseProvider);
+          if (result == true && mounted) {
+            setState(() {});
           }
         },
         child: const Icon(Icons.add),

@@ -58,22 +58,17 @@ class _AccountFormScreenState extends ConsumerState<AccountFormScreen> {
     setState(() => _isLoading = true);
     
     try {
-      final createAccount = ref.read(createAccountUseCaseProvider);
+      final createAccount = ref.read(createAccountProvider);
       
-      final account = Account(
-        id: widget.account?.id ?? const Uuid().v4(),
+      final result = await createAccount(CreateAccountParams(
         name: _nameController.text.trim(),
         type: _selectedType,
-        balance: int.parse(_balanceController.text.trim()),
+        initialBalance: int.parse(_balanceController.text.trim()),
         description: _descriptionController.text.trim().isEmpty 
             ? null 
             : _descriptionController.text.trim(),
-        color: _selectedColor,
-        createdAt: widget.account?.createdAt ?? DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-      
-      final result = await createAccount(CreateAccountParams(account: account));
+        color: '#${_selectedColor.value.toRadixString(16).substring(2)}',
+      ));
       
       result.fold(
         (failure) {

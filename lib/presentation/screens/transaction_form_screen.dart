@@ -1,5 +1,6 @@
 import 'package:financial_management/core/constants/category_constants.dart';
 import 'package:financial_management/core/localization/app_localizations.dart';
+import 'package:financial_management/core/usecases/usecase.dart';
 import 'package:financial_management/domain/entities/transaction.dart';
 import 'package:financial_management/domain/usecases/account/get_all_accounts.dart';
 import 'package:financial_management/domain/usecases/transaction/create_transaction.dart';
@@ -88,10 +89,9 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
     setState(() => _isLoading = true);
     
     try {
-      final createTransaction = ref.read(createTransactionUseCaseProvider);
+      final createTransaction = ref.read(createTransactionProvider);
       
-      final transaction = Transaction(
-        id: widget.transaction?.id ?? const Uuid().v4(),
+      final result = await createTransaction(CreateTransactionParams(
         amount: int.parse(_amountController.text.trim()),
         type: _selectedType,
         accountId: _selectedAccountId!,
@@ -102,11 +102,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
             : _noteController.text.trim(),
         imagePath: widget.transaction?.imagePath,
         smsId: widget.transaction?.smsId,
-        createdAt: widget.transaction?.createdAt ?? DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-      
-      final result = await createTransaction(CreateTransactionParams(transaction: transaction));
+      ));
       
       result.fold(
         (failure) {
@@ -150,7 +146,6 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.transaction != null;
-    final accountsAsync = ref.watch(getAllAccountsUseCaseProvider.future);
     
     return Scaffold(
       appBar: AppBar(
@@ -213,10 +208,17 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
             
             // Account Selection
             FutureBuilder(
-              future: accountsAsync,
+              future: ref.read(getAllAccountsProvider)(NoParams()),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const LinearProgressIndicator();
+                }
+                
+                if (snapshot.hasError) {
+                  return Text(
+                    context.tr('error_loading_accounts'),
+                    style: const TextStyle(color: Colors.red),
+                  );
                 }
                 
                 return snapshot.data?.fold(
