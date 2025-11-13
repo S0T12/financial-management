@@ -5,8 +5,8 @@ import 'package:financial_management/domain/entities/transfer.dart';
 /// Transfers table definition
 class Transfers extends Table {
   TextColumn get id => text()();
-  TextColumn get fromAccountId => text().customConstraint('REFERENCES accounts(id) ON DELETE CASCADE')();
-  TextColumn get toAccountId => text().customConstraint('REFERENCES accounts(id) ON DELETE CASCADE')();
+  TextColumn get fromAccountId => text().customConstraint('NOT NULL REFERENCES accounts(id) ON DELETE CASCADE')();
+  TextColumn get toAccountId => text().customConstraint('NOT NULL REFERENCES accounts(id) ON DELETE CASCADE')();
   IntColumn get amount => integer()();
   TextColumn get note => text().nullable()();
   DateTimeColumn get dateTime => dateTime()();
