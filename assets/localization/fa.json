@@ -1,0 +1,103 @@
+{
+  "app_name": "مدیریت مالی",
+  "dashboard": "داشبورد",
+  "transactions": "تراکنش‌ها",
+  "reports": "گزارش‌ها",
+  "settings": "تنظیمات",
+  "accounts": "حساب‌ها",
+
+  "total_balance": "موجودی کل",
+  "monthly_income": "درآمد ماهانه",
+  "monthly_expense": "هزینه ماهانه",
+  "recent_transactions": "تراکنش‌های اخیر",
+
+  "add_transaction": "افزودن تراکنش",
+  "add_account": "افزودن حساب",
+  "add_transfer": "انتقال وجه",
+
+  "income": "درآمد",
+  "expense": "هزینه",
+  "transfer": "انتقال",
+
+  "amount": "مبلغ",
+  "date": "تاریخ",
+  "time": "زمان",
+  "category": "دسته‌بندی",
+  "note": "یادداشت",
+  "account": "حساب",
+  "from_account": "از حساب",
+  "to_account": "به حساب",
+
+  "save": "ذخیره",
+  "cancel": "لغو",
+  "delete": "حذف",
+  "edit": "ویرایش",
+  "search": "جستجو",
+  "filter": "فیلتر",
+
+  "account_name": "نام حساب",
+  "account_type": "نوع حساب",
+  "initial_balance": "موجودی اولیه",
+  "description": "توضیحات",
+
+  "category.food": "خوراک و نوشیدنی",
+  "category.transport": "حمل و نقل",
+  "category.shopping": "خرید",
+  "category.entertainment": "سرگرمی",
+  "category.health": "بهداشت و درمان",
+  "category.education": "آموزش",
+  "category.bills": "قبوض",
+  "category.salary": "حقوق",
+  "category.business": "کسب و کار",
+  "category.investment": "سرمایه‌گذاری",
+  "category.gift": "هدیه",
+  "category.other": "سایر",
+
+  "account_type.personal": "شخصی",
+  "account_type.business": "کسب و کار",
+  "account_type.family": "خانوادگی",
+  "account_type.savings": "پس‌انداز",
+
+  "expense_by_category": "هزینه بر اساس دسته‌بندی",
+  "spending_trend": "روند هزینه",
+  "monthly_report": "گزارش ماهانه",
+  "average_daily_spending": "میانگین هزینه روزانه",
+
+  "theme": "تم",
+  "language": "زبان",
+  "dark_mode": "حالت تاریک",
+  "light_mode": "حالت روشن",
+
+  "persian": "فارسی",
+  "english": "English",
+
+  "sms_sync": "همگام‌سازی پیامک",
+  "sms_sync_description": "خواندن و تحلیل خودکار پیامک‌های بانکی",
+  "grant_sms_permission": "اجازه دسترسی به پیامک",
+
+  "backup": "پشتیبان‌گیری",
+  "restore": "بازیابی",
+  "export_report": "خروجی گزارش",
+
+  "confirm_delete": "آیا از حذف اطمینان دارید؟",
+  "confirm_delete_account": "حذف حساب تمام تراکنش‌های مرتبط را نیز حذف می‌کند.",
+
+  "error": "خطا",
+  "success": "موفقیت",
+  "warning": "هشدار",
+  "info": "اطلاعات",
+
+  "no_data": "اطلاعاتی وجود ندارد",
+  "loading": "در حال بارگذاری...",
+
+  "validation_required": "این فیلد الزامی است",
+  "validation_positive_amount": "مبلغ باید مثبت باشد",
+  "validation_account_name_length": "نام حساب باید حداقل ۲ کاراکتر باشد",
+
+  "currency_rial": "ریال",
+  "currency_toman": "تومان",
+
+  "no_accounts": "حسابی وجود ندارد",
+  "no_transactions": "تراکنشی وجود ندارد",
+  "see_all": "مشاهده همه"
+}

@@ -1,0 +1,103 @@
+{
+  "app_name": "Financial Management",
+  "dashboard": "Dashboard",
+  "transactions": "Transactions",
+  "reports": "Reports",
+  "settings": "Settings",
+  "accounts": "Accounts",
+
+  "total_balance": "Total Balance",
+  "monthly_income": "Monthly Income",
+  "monthly_expense": "Monthly Expense",
+  "recent_transactions": "Recent Transactions",
+
+  "add_transaction": "Add Transaction",
+  "add_account": "Add Account",
+  "add_transfer": "Transfer Money",
+
+  "income": "Income",
+  "expense": "Expense",
+  "transfer": "Transfer",
+
+  "amount": "Amount",
+  "date": "Date",
+  "time": "Time",
+  "category": "Category",
+  "note": "Note",
+  "account": "Account",
+  "from_account": "From Account",
+  "to_account": "To Account",
+
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "search": "Search",
+  "filter": "Filter",
+
+  "account_name": "Account Name",
+  "account_type": "Account Type",
+  "initial_balance": "Initial Balance",
+  "description": "Description",
+
+  "category.food": "Food & Drinks",
+  "category.transport": "Transport",
+  "category.shopping": "Shopping",
+  "category.entertainment": "Entertainment",
+  "category.health": "Health",
+  "category.education": "Education",
+  "category.bills": "Bills",
+  "category.salary": "Salary",
+  "category.business": "Business",
+  "category.investment": "Investment",
+  "category.gift": "Gift",
+  "category.other": "Other",
+
+  "account_type.personal": "Personal",
+  "account_type.business": "Business",
+  "account_type.family": "Family",
+  "account_type.savings": "Savings",
+
+  "expense_by_category": "Expense by Category",
+  "spending_trend": "Spending Trend",
+  "monthly_report": "Monthly Report",
+  "average_daily_spending": "Average Daily Spending",
+
+  "theme": "Theme",
+  "language": "Language",
+  "dark_mode": "Dark Mode",
+  "light_mode": "Light Mode",
+
+  "persian": "فارسی",
+  "english": "English",
+
+  "sms_sync": "SMS Sync",
+  "sms_sync_description": "Automatically read and analyze bank SMS messages",
+  "grant_sms_permission": "Grant SMS Permission",
+
+  "backup": "Backup",
+  "restore": "Restore",
+  "export_report": "Export Report",
+
+  "confirm_delete": "Are you sure you want to delete?",
+  "confirm_delete_account": "Deleting account will also delete all related transactions.",
+
+  "error": "Error",
+  "success": "Success",
+  "warning": "Warning",
+  "info": "Information",
+
+  "no_data": "No data available",
+  "loading": "Loading...",
+
+  "validation_required": "This field is required",
+  "validation_positive_amount": "Amount must be positive",
+  "validation_account_name_length": "Account name must be at least 2 characters",
+
+  "currency_rial": "Rial",
+  "currency_toman": "Toman",
+
+  "no_accounts": "No accounts yet",
+  "no_transactions": "No transactions yet",
+  "see_all": "See All"
+}
