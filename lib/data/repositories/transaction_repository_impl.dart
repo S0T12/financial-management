@@ -5,7 +5,7 @@ import 'package:financial_management/core/error/exceptions.dart';
 import 'package:financial_management/core/error/failures.dart';
 import 'package:financial_management/data/datasources/local/app_database.dart';
 import 'package:financial_management/data/datasources/local/tables/transactions_table.dart';
-import 'package:financial_management/domain/entities/transaction.dart';
+import 'package:financial_management/domain/entities/transaction.dart' as domain;
 import 'package:financial_management/domain/repositories/transaction_repository.dart';
 import 'package:uuid/uuid.dart';
 
@@ -29,7 +29,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   }) async {
     try {
       final now = DateTime.now();
-      final transaction = Transaction(
+      final transaction = domain.Transaction(
         id: uuid.v4(),
         amount: amount,
         type: type,

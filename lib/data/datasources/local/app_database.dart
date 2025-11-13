@@ -4,9 +4,11 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:financial_management/core/constants/app_constants.dart';
+import 'package:financial_management/core/constants/category_constants.dart';
 import 'package:financial_management/data/datasources/local/tables/accounts_table.dart';
 import 'package:financial_management/data/datasources/local/tables/transactions_table.dart';
 import 'package:financial_management/data/datasources/local/tables/transfers_table.dart';
+import 'package:financial_management/domain/entities/transaction.dart' as domain;
 
 part 'app_database.g.dart';
 

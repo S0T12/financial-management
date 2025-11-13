@@ -5,7 +5,7 @@ import 'package:financial_management/core/error/exceptions.dart';
 import 'package:financial_management/core/error/failures.dart';
 import 'package:financial_management/data/datasources/local/app_database.dart';
 import 'package:financial_management/data/datasources/local/tables/accounts_table.dart';
-import 'package:financial_management/domain/entities/account.dart';
+import 'package:financial_management/domain/entities/account.dart' as domain;
 import 'package:financial_management/domain/repositories/account_repository.dart';
 import 'package:uuid/uuid.dart';
 
@@ -26,7 +26,7 @@ class AccountRepositoryImpl implements AccountRepository {
   }) async {
     try {
       final now = DateTime.now();
-      final account = Account(
+      final account = domain.Account(
         id: uuid.v4(),
         name: name,
         type: type,
@@ -168,8 +168,8 @@ class AccountRepositoryImpl implements AccountRepository {
     }
   }
   
-  Account _accountDataToEntity(AccountData data) {
-    return Account(
+  domain.Account _accountDataToEntity(AccountData data) {
+    return domain.Account(
       id: data.id,
       name: data.name,
       type: AccountType.values[data.type],
