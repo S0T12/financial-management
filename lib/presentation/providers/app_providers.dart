@@ -3,10 +3,10 @@ import 'package:financial_management/data/repositories/account_repository_impl.d
 import 'package:financial_management/data/repositories/transaction_repository_impl.dart';
 import 'package:financial_management/domain/repositories/account_repository.dart';
 import 'package:financial_management/domain/repositories/transaction_repository.dart';
-import 'package:financial_management/domain/usecases/create_account.dart';
-import 'package:financial_management/domain/usecases/create_transaction.dart';
-import 'package:financial_management/domain/usecases/get_all_accounts.dart';
-import 'package:financial_management/domain/usecases/get_recent_transactions.dart';
+import 'package:financial_management/domain/usecases/account/create_account.dart';
+import 'package:financial_management/domain/usecases/account/get_all_accounts.dart';
+import 'package:financial_management/domain/usecases/transaction/create_transaction.dart';
+import 'package:financial_management/domain/usecases/transaction/get_recent_transactions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 

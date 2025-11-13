@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:financial_management/core/constants/category_constants.dart';
+import 'package:financial_management/data/datasources/local/app_database.dart';
 import 'package:financial_management/data/datasources/local/tables/accounts_table.dart';
 import 'package:financial_management/domain/entities/transaction.dart';
 
