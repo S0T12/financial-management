@@ -46,6 +46,18 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
           }
           
           return snapshot.data?.fold(
+            (failure) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    context.tr('error_loading_transactions'),
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
             ),
             (transactions) {
               if (transactions.isEmpty) {

@@ -44,11 +44,6 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
       _selectedAccountId = widget.transaction!.accountId;
       _selectedDate = widget.transaction!.dateTime;
     }
-    
-    // Load accounts
-    Future.microtask(() {
-      ref.read(getAllAccountsUseCaseProvider)();
-    });
   }
   
   @override

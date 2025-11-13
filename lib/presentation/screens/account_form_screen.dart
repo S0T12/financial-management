@@ -67,7 +67,7 @@ class _AccountFormScreenState extends ConsumerState<AccountFormScreen> {
         description: _descriptionController.text.trim().isEmpty 
             ? null 
             : _descriptionController.text.trim(),
-        color: '#${_selectedColor.value.toRadixString(16).substring(2)}',
+        color: _selectedColor,
       ));
       
       result.fold(
