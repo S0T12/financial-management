@@ -4,6 +4,7 @@ import 'package:financial_management/data/datasources/local/tables/accounts_tabl
 import 'package:financial_management/domain/entities/transaction.dart';
 
 /// Transactions table definition
+@DataClassName('TransactionModel')
 class Transactions extends Table {
   TextColumn get id => text()();
   IntColumn get amount => integer()();
@@ -26,8 +27,8 @@ class Transactions extends Table {
   ];
 }
 
-/// Extension to convert database data to domain entity
-extension TransactionDataExtension on TransactionData {
+/// Extension to convert database model to domain entity
+extension TransactionModelExtension on TransactionModel {
   Transaction toEntity() {
     return Transaction(
       id: id,

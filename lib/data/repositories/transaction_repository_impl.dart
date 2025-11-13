@@ -5,7 +5,7 @@ import 'package:financial_management/core/error/exceptions.dart';
 import 'package:financial_management/core/error/failures.dart';
 import 'package:financial_management/data/datasources/local/app_database.dart';
 import 'package:financial_management/data/datasources/local/tables/transactions_table.dart';
-import 'package:financial_management/domain/entities/transaction.dart' as domain;
+import 'package:financial_management/domain/entities/transaction.dart';
 import 'package:financial_management/domain/repositories/transaction_repository.dart';
 import 'package:uuid/uuid.dart';
 
@@ -29,7 +29,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
   }) async {
     try {
       final now = DateTime.now();
-      final transaction = domain.Transaction(
+      final transaction = Transaction(
         id: uuid.v4(),
         amount: amount,
         type: type,
@@ -43,7 +43,21 @@ class TransactionRepositoryImpl implements TransactionRepository {
         updatedAt: now,
       );
       
-      await database.into(database.transactions).insert(transaction.toCompanion());
+      await database.into(database.transactions).insert(
+        TransactionsCompanion(
+          id: Value(transaction.id),
+          amount: Value(transaction.amount),
+          type: Value(transaction.type),
+          accountId: Value(transaction.accountId),
+          transactionDate: Value(transaction.dateTime),
+          category: Value(transaction.category),
+          note: Value(transaction.note),
+          imagePath: Value(transaction.imagePath),
+          smsId: Value(transaction.smsId),
+          createdAt: Value(transaction.createdAt),
+          updatedAt: Value(transaction.updatedAt),
+        ),
+      );
       
       return Right(transaction);
     } on DatabaseException catch (e) {
@@ -139,7 +153,21 @@ class TransactionRepositoryImpl implements TransactionRepository {
     try {
       final updated = transaction.copyWith(updatedAt: DateTime.now());
       
-      await database.update(database.transactions).replace(updated.toCompanion());
+      await database.update(database.transactions).replace(
+        TransactionsCompanion(
+          id: Value(updated.id),
+          amount: Value(updated.amount),
+          type: Value(updated.type),
+          accountId: Value(updated.accountId),
+          transactionDate: Value(updated.dateTime),
+          category: Value(updated.category),
+          note: Value(updated.note),
+          imagePath: Value(updated.imagePath),
+          smsId: Value(updated.smsId),
+          createdAt: Value(updated.createdAt),
+          updatedAt: Value(updated.updatedAt),
+        ),
+      );
       
       return Right(updated);
     } on DatabaseException catch (e) {

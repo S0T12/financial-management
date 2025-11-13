@@ -3,6 +3,7 @@ import 'package:financial_management/core/constants/category_constants.dart';
 import 'package:financial_management/domain/entities/account.dart';
 
 /// Accounts table definition
+@DataClassName('AccountModel')
 class Accounts extends Table {
   TextColumn get id => text()();
   TextColumn get name => text().withLength(min: 1, max: 100)();
@@ -17,18 +18,18 @@ class Accounts extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Extension to convert database row to domain entity
-extension AccountExtension on AccountsCompanion {
+/// Extension to convert database model to domain entity
+extension AccountModelExtension on AccountModel {
   Account toEntity() {
     return Account(
-      id: id.value,
-      name: name.value,
-      type: AccountType.values[type.value],
-      balance: balance.value,
-      description: description.value,
-      color: color.value,
-      createdAt: createdAt.value,
-      updatedAt: updatedAt.value,
+      id: id,
+      name: name,
+      type: AccountType.values[type],
+      balance: balance,
+      description: description,
+      color: color,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 }

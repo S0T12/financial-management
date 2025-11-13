@@ -5,7 +5,7 @@ import 'package:financial_management/core/error/exceptions.dart';
 import 'package:financial_management/core/error/failures.dart';
 import 'package:financial_management/data/datasources/local/app_database.dart';
 import 'package:financial_management/data/datasources/local/tables/accounts_table.dart';
-import 'package:financial_management/domain/entities/account.dart' as domain;
+import 'package:financial_management/domain/entities/account.dart';
 import 'package:financial_management/domain/repositories/account_repository.dart';
 import 'package:uuid/uuid.dart';
 
@@ -26,7 +26,7 @@ class AccountRepositoryImpl implements AccountRepository {
   }) async {
     try {
       final now = DateTime.now();
-      final account = domain.Account(
+      final account = Account(
         id: uuid.v4(),
         name: name,
         type: type,
@@ -37,7 +37,18 @@ class AccountRepositoryImpl implements AccountRepository {
         updatedAt: now,
       );
       
-      await database.into(database.accounts).insert(account.toCompanion());
+      await database.into(database.accounts).insert(
+        AccountsCompanion(
+          id: Value(account.id),
+          name: Value(account.name),
+          type: Value(account.type),
+          balance: Value(account.balance),
+          description: Value(account.description),
+          color: Value(account.color),
+          createdAt: Value(account.createdAt),
+          updatedAt: Value(account.updatedAt),
+        ),
+      );
       
       return Right(account);
     } on DatabaseException catch (e) {
@@ -59,7 +70,7 @@ class AccountRepositoryImpl implements AccountRepository {
         return const Left(DatabaseFailure('Account not found'));
       }
       
-      return Right(_accountDataToEntity(result));
+      return Right(result.toEntity());
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));
     } catch (e) {
@@ -76,7 +87,7 @@ class AccountRepositoryImpl implements AccountRepository {
         ]);
       
       final results = await query.get();
-      final accounts = results.map(_accountDataToEntity).toList();
+      final accounts = results.map((model) => model.toEntity()).toList();
       
       return Right(accounts);
     } on DatabaseException catch (e) {
@@ -91,7 +102,18 @@ class AccountRepositoryImpl implements AccountRepository {
     try {
       final updated = account.copyWith(updatedAt: DateTime.now());
       
-      await database.update(database.accounts).replace(updated.toCompanion());
+      await database.update(database.accounts).replace(
+        AccountsCompanion(
+          id: Value(updated.id),
+          name: Value(updated.name),
+          type: Value(updated.type),
+          balance: Value(updated.balance),
+          description: Value(updated.description),
+          color: Value(updated.color),
+          createdAt: Value(updated.createdAt),
+          updatedAt: Value(updated.updatedAt),
+        ),
+      );
       
       return Right(updated);
     } on DatabaseException catch (e) {
@@ -166,18 +188,5 @@ class AccountRepositoryImpl implements AccountRepository {
     } catch (e) {
       return Left(DatabaseFailure('Failed to check account existence: $e'));
     }
-  }
-  
-  domain.Account _accountDataToEntity(AccountData data) {
-    return domain.Account(
-      id: data.id,
-      name: data.name,
-      type: AccountType.values[data.type],
-      balance: data.balance,
-      description: data.description,
-      color: data.color,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-    );
   }
 }

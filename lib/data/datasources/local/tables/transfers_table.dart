@@ -3,6 +3,7 @@ import 'package:financial_management/data/datasources/local/tables/accounts_tabl
 import 'package:financial_management/domain/entities/transfer.dart';
 
 /// Transfers table definition
+@DataClassName('TransferModel')
 class Transfers extends Table {
   TextColumn get id => text()();
   TextColumn get fromAccountId => text().customConstraint('NOT NULL REFERENCES accounts(id) ON DELETE CASCADE')();
@@ -16,8 +17,8 @@ class Transfers extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// Extension to convert database data to domain entity
-extension TransferDataExtension on TransferData {
+/// Extension to convert database model to domain entity
+extension TransferModelExtension on TransferModel {
   Transfer toEntity() {
     return Transfer(
       id: id,
