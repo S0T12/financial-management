@@ -32,7 +32,8 @@ class TransactionLabel extends Equatable {
   IconData getIcon() {
     if (icon == null) return Icons.label;
     try {
-      return IconData(int.parse(icon!), fontFamily: 'MaterialIcons');
+      final codePoint = int.parse(icon!);
+      return IconData(codePoint, fontFamily: 'MaterialIcons');
     } catch (e) {
       return Icons.label;
     }
