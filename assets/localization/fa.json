@@ -99,5 +99,38 @@
 
   "no_accounts": "حسابی وجود ندارد",
   "no_transactions": "تراکنشی وجود ندارد",
-  "see_all": "مشاهده همه"
+  "see_all": "مشاهده همه",
+
+  "edit_account": "ویرایش حساب",
+  "edit_transaction": "ویرایش تراکنش",
+  "create_account": "ایجاد حساب",
+  "create_transaction": "ایجاد تراکنش",
+  "save_changes": "ذخیره تغییرات",
+  
+  "enter_account_name": "نام حساب را وارد کنید",
+  "enter_description": "توضیحات را وارد کنید (اختیاری)",
+  "enter_note": "یادداشت را وارد کنید",
+  "enter_amount": "مبلغ را وارد کنید",
+  "current_balance": "موجودی فعلی",
+  "description_optional": "توضیحات (اختیاری)",
+  "note_optional": "یادداشت (اختیاری)",
+  "select_color": "انتخاب رنگ",
+  "please_enter_account_name": "لطفاً نام حساب را وارد کنید",
+  "account_name_too_short": "نام حساب خیلی کوتاه است",
+  "please_enter_balance": "لطفاً موجودی را وارد کنید",
+  "please_enter_amount": "لطفاً مبلغ را وارد کنید",
+  "invalid_amount": "مبلغ نامعتبر است",
+  "please_select_account": "لطفاً یک حساب انتخاب کنید",
+  
+  "error_saving_account": "خطا در ذخیره حساب",
+  "account_saved_successfully": "حساب با موفقیت ذخیره شد",
+  "error_saving_transaction": "خطا در ذخیره تراکنش",
+  "transaction_saved_successfully": "تراکنش با موفقیت ذخیره شد",
+  "error_loading_accounts": "خطا در بارگذاری حساب‌ها",
+  "error_loading_transactions": "خطا در بارگذاری تراکنش‌ها",
+  "no_accounts_available": "هیچ حسابی موجود نیست",
+  "add_first_account": "اولین حساب خود را اضافه کنید",
+  "add_first_transaction": "اولین تراکنش خود را اضافه کنید",
+  
+  "currency": "ریال"
 }

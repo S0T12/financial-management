@@ -3,6 +3,10 @@ import 'package:financial_management/core/theme/app_theme.dart';
 import 'package:financial_management/core/utils/date_time_utils.dart';
 import 'package:financial_management/domain/entities/account.dart';
 import 'package:financial_management/domain/entities/transaction.dart';
+import 'package:financial_management/presentation/screens/account_form_screen.dart';
+import 'package:financial_management/presentation/screens/accounts_list_screen.dart';
+import 'package:financial_management/presentation/screens/transaction_form_screen.dart';
+import 'package:financial_management/presentation/screens/transactions_list_screen.dart';
 import 'package:financial_management/presentation/viewmodels/dashboard_viewmodel.dart';
 import 'package:financial_management/presentation/widgets/account_card.dart';
 import 'package:financial_management/presentation/widgets/balance_card.dart';
@@ -76,8 +80,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             ),
                           ),
                           TextButton.icon(
-                            onPressed: () {
-                              // Navigate to add account screen
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const AccountFormScreen(),
+                                ),
+                              );
+                              if (result == true && mounted) {
+                                ref.read(dashboardViewModelProvider.notifier).refresh();
+                              }
                             },
                             icon: const Icon(Icons.add),
                             label: Text(context.tr('add_account')),
@@ -120,8 +132,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {
-                              // Navigate to all transactions screen
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const TransactionsListScreen(),
+                                ),
+                              );
+                              if (mounted) {
+                                ref.read(dashboardViewModelProvider.notifier).refresh();
+                              }
                             },
                             child: Text(context.tr('see_all')),
                           ),
@@ -150,8 +170,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
             ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Navigate to add transaction screen
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const TransactionFormScreen(),
+            ),
+          );
+          if (result == true && mounted) {
+            ref.read(dashboardViewModelProvider.notifier).refresh();
+          }
         },
         icon: const Icon(Icons.add),
         label: Text(context.tr('add_transaction')),

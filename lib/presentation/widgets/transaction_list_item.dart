@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class TransactionListItem extends StatelessWidget {
   final Transaction transaction;
   final String locale;
+  final VoidCallback? onTap;
   
   const TransactionListItem({
     super.key,
     required this.transaction,
     required this.locale,
+    this.onTap,
   });
   
   @override
@@ -19,6 +21,7 @@ class TransactionListItem extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
+        onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
           width: 48,
