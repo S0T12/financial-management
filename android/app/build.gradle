@@ -57,11 +57,26 @@ android {
         targetSdk 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        // Disable APK splits to create a universal APK
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+        }
     }
 
     buildTypes {
         release {
             signingConfig signingConfigs.debug
+            // Disable APK splitting
+            ndk {
+                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+            }
+        }
+    }
+    
+    // Disable APK splits to create a fat APK
+    splits {
+        abi {
+            enable false
         }
     }
 }
