@@ -96,14 +96,14 @@ class TransactionRepositoryImpl implements TransactionRepository {
         query.where((tbl) => tbl.category.equals(category.index));
       }
       if (startDate != null) {
-        query.where((tbl) => tbl.dateTime.isBiggerOrEqualValue(startDate));
+        query.where((tbl) => tbl.transactionDate.isBiggerOrEqualValue(startDate));
       }
       if (endDate != null) {
-        query.where((tbl) => tbl.dateTime.isSmallerOrEqualValue(endDate));
+        query.where((tbl) => tbl.transactionDate.isSmallerOrEqualValue(endDate));
       }
       
       query.orderBy([
-        (tbl) => OrderingTerm(expression: tbl.dateTime, mode: OrderingMode.desc)
+        (tbl) => OrderingTerm(expression: tbl.transactionDate, mode: OrderingMode.desc)
       ]);
       
       if (limit != null) {
@@ -199,10 +199,10 @@ class TransactionRepositoryImpl implements TransactionRepository {
         query.where(database.transactions.accountId.equals(accountId));
       }
       if (startDate != null) {
-        query.where(database.transactions.dateTime.isBiggerOrEqualValue(startDate));
+        query.where(database.transactions.transactionDate.isBiggerOrEqualValue(startDate));
       }
       if (endDate != null) {
-        query.where(database.transactions.dateTime.isSmallerOrEqualValue(endDate));
+        query.where(database.transactions.transactionDate.isSmallerOrEqualValue(endDate));
       }
       
       final result = await query.getSingle();
@@ -231,10 +231,10 @@ class TransactionRepositoryImpl implements TransactionRepository {
         query.where(database.transactions.accountId.equals(accountId));
       }
       if (startDate != null) {
-        query.where(database.transactions.dateTime.isBiggerOrEqualValue(startDate));
+        query.where(database.transactions.transactionDate.isBiggerOrEqualValue(startDate));
       }
       if (endDate != null) {
-        query.where(database.transactions.dateTime.isSmallerOrEqualValue(endDate));
+        query.where(database.transactions.transactionDate.isSmallerOrEqualValue(endDate));
       }
       
       final result = await query.getSingle();
@@ -254,7 +254,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
       final search = database.select(database.transactions)
         ..where((tbl) => tbl.note.contains(query))
         ..orderBy([
-          (tbl) => OrderingTerm(expression: tbl.dateTime, mode: OrderingMode.desc)
+          (tbl) => OrderingTerm(expression: tbl.transactionDate, mode: OrderingMode.desc)
         ]);
       
       final results = await search.get();

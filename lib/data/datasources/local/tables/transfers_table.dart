@@ -9,7 +9,7 @@ class Transfers extends Table {
   TextColumn get toAccountId => text().customConstraint('NOT NULL REFERENCES accounts(id) ON DELETE CASCADE')();
   IntColumn get amount => integer()();
   TextColumn get note => text().nullable()();
-  DateTimeColumn get dateTime => dateTime()();
+  DateTimeColumn get transferDate => dateTime()();
   DateTimeColumn get createdAt => dateTime()();
   
   @override
@@ -25,7 +25,7 @@ extension TransferDataExtension on TransferData {
       toAccountId: toAccountId,
       amount: amount,
       note: note,
-      dateTime: dateTime,
+      dateTime: transferDate,
       createdAt: createdAt,
     );
   }
@@ -40,7 +40,7 @@ extension TransferEntityExtension on Transfer {
       toAccountId: Value(toAccountId),
       amount: Value(amount),
       note: Value(note),
-      dateTime: Value(dateTime),
+      transferDate: Value(dateTime),
       createdAt: Value(createdAt),
     );
   }

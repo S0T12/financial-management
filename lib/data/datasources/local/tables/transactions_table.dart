@@ -9,7 +9,7 @@ class Transactions extends Table {
   IntColumn get amount => integer()();
   IntColumn get type => intEnum<TransactionType>()();
   TextColumn get accountId => text().customConstraint('NOT NULL REFERENCES accounts(id) ON DELETE CASCADE')();
-  DateTimeColumn get dateTime => dateTime()();
+  DateTimeColumn get transactionDate => dateTime()();
   IntColumn get category => intEnum<TransactionCategory>()();
   TextColumn get note => text().nullable()();
   TextColumn get imagePath => text().nullable()();
@@ -34,7 +34,7 @@ extension TransactionDataExtension on TransactionData {
       amount: amount,
       type: TransactionType.values[type],
       accountId: accountId,
-      dateTime: dateTime,
+      dateTime: transactionDate,
       category: TransactionCategory.values[category],
       note: note,
       imagePath: imagePath,
@@ -53,7 +53,7 @@ extension TransactionEntityExtension on Transaction {
       amount: Value(amount),
       type: Value(type.index),
       accountId: Value(accountId),
-      dateTime: Value(dateTime),
+      transactionDate: Value(dateTime),
       category: Value(category.index),
       note: Value(note),
       imagePath: Value(imagePath),

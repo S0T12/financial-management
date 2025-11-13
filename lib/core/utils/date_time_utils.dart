@@ -9,7 +9,7 @@ class DateTimeUtils {
   /// Convert DateTime to Jalali date string
   static String toJalaliString(DateTime dateTime, {String format = 'yyyy/MM/dd'}) {
     final jalali = Jalali.fromDateTime(dateTime);
-    return jalali.formatter.format(format);
+    return jalali.formatCompactDate();
   }
   
   /// Convert DateTime to Jalali with time
