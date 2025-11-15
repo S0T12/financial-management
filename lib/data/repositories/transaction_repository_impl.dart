@@ -7,14 +7,16 @@ import 'package:financial_management/data/datasources/local/app_database.dart';
 import 'package:financial_management/data/datasources/local/tables/transactions_table.dart';
 import 'package:financial_management/domain/entities/transaction.dart';
 import 'package:financial_management/domain/repositories/transaction_repository.dart';
+import 'package:financial_management/domain/repositories/account_repository.dart';
 import 'package:uuid/uuid.dart';
 
 /// Implementation of TransactionRepository
 class TransactionRepositoryImpl implements TransactionRepository {
   final AppDatabase database;
   final Uuid uuid;
+  final AccountRepository accountRepository;
   
-  TransactionRepositoryImpl(this.database, this.uuid);
+  TransactionRepositoryImpl(this.database, this.uuid, this.accountRepository);
   
   @override
   Future<Either<Failure, Transaction>> createTransaction({
@@ -26,6 +28,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     String? note,
     String? imagePath,
     String? smsId,
+    List<String>? labelIds,
   }) async {
     try {
       final now = DateTime.now();
@@ -39,10 +42,12 @@ class TransactionRepositoryImpl implements TransactionRepository {
         note: note,
         imagePath: imagePath,
         smsId: smsId,
+        labelIds: labelIds,
         createdAt: now,
         updatedAt: now,
       );
       
+      // Insert transaction
       await database.into(database.transactions).insert(
         TransactionsCompanion(
           id: Value(transaction.id),
@@ -59,12 +64,59 @@ class TransactionRepositoryImpl implements TransactionRepository {
         ),
       );
       
+      // Insert label mappings if labels are provided
+      if (labelIds != null && labelIds.isNotEmpty) {
+        for (final labelId in labelIds) {
+          await database.into(database.transactionLabelMappings).insert(
+            TransactionLabelMappingsCompanion(
+              transactionId: Value(transaction.id),
+              labelId: Value(labelId),
+              createdAt: Value(now),
+            ),
+          );
+        }
+      }
+      
+      // Update account balance
+      await _updateAccountBalanceForTransaction(transaction, isCreating: true);
+      
       return Right(transaction);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));
     } catch (e) {
       return Left(DatabaseFailure('Failed to create transaction: $e'));
     }
+  }
+  
+  Future<void> _updateAccountBalanceForTransaction(Transaction transaction, {required bool isCreating}) async {
+    final accountResult = await accountRepository.getAccountById(transaction.accountId);
+    
+    await accountResult.fold(
+      (failure) async {
+        // Account not found, skip balance update
+      },
+      (account) async {
+        int newBalance = account.balance;
+        
+        if (isCreating) {
+          // Creating new transaction
+          if (transaction.type == TransactionType.expense) {
+            newBalance -= transaction.amount;
+          } else {
+            newBalance += transaction.amount;
+          }
+        } else {
+          // Deleting transaction (reverse the operation)
+          if (transaction.type == TransactionType.expense) {
+            newBalance += transaction.amount;
+          } else {
+            newBalance -= transaction.amount;
+          }
+        }
+        
+        await accountRepository.updateAccountBalance(transaction.accountId, newBalance);
+      },
+    );
   }
   
   @override
@@ -79,7 +131,15 @@ class TransactionRepositoryImpl implements TransactionRepository {
         return const Left(DatabaseFailure('Transaction not found'));
       }
       
-      return Right(result.toEntity());
+      // Get label IDs for this transaction
+      final labelQuery = database.select(database.transactionLabelMappings)
+        ..where((tbl) => tbl.transactionId.equals(id));
+      final labelMappings = await labelQuery.get();
+      final labelIds = labelMappings.map((m) => m.labelId).toList();
+      
+      final transaction = result.toEntity().copyWith(labelIds: labelIds.isEmpty ? null : labelIds);
+      
+      return Right(transaction);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));
     } catch (e) {
@@ -125,7 +185,17 @@ class TransactionRepositoryImpl implements TransactionRepository {
       }
       
       final results = await query.get();
-      final transactions = results.map((data) => data.toEntity()).toList();
+      
+      // Get labels for each transaction
+      final transactions = <Transaction>[];
+      for (final result in results) {
+        final labelQuery = database.select(database.transactionLabelMappings)
+          ..where((tbl) => tbl.transactionId.equals(result.id));
+        final labelMappings = await labelQuery.get();
+        final labelIds = labelMappings.map((m) => m.labelId).toList();
+        
+        transactions.add(result.toEntity().copyWith(labelIds: labelIds.isEmpty ? null : labelIds));
+      }
       
       return Right(transactions);
     } on DatabaseException catch (e) {
@@ -153,6 +223,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     try {
       final updated = transaction.copyWith(updatedAt: DateTime.now());
       
+      // Update the transaction
       await database.update(database.transactions).replace(
         TransactionsCompanion(
           id: Value(updated.id),
@@ -169,6 +240,24 @@ class TransactionRepositoryImpl implements TransactionRepository {
         ),
       );
       
+      // Update label mappings
+      // First delete all existing mappings
+      await (database.delete(database.transactionLabelMappings)
+        ..where((tbl) => tbl.transactionId.equals(updated.id))).go();
+      
+      // Then insert new mappings
+      if (updated.labelIds != null && updated.labelIds!.isNotEmpty) {
+        for (final labelId in updated.labelIds!) {
+          await database.into(database.transactionLabelMappings).insert(
+            TransactionLabelMappingsCompanion(
+              transactionId: Value(updated.id),
+              labelId: Value(labelId),
+              createdAt: Value(DateTime.now()),
+            ),
+          );
+        }
+      }
+      
       return Right(updated);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));
@@ -180,6 +269,24 @@ class TransactionRepositoryImpl implements TransactionRepository {
   @override
   Future<Either<Failure, void>> deleteTransaction(String id) async {
     try {
+      // Get transaction first to update account balance
+      final transactionResult = await getTransactionById(id);
+      
+      await transactionResult.fold(
+        (failure) async {
+          // Transaction not found
+        },
+        (transaction) async {
+          // Update account balance (reverse the transaction)
+          await _updateAccountBalanceForTransaction(transaction, isCreating: false);
+        },
+      );
+      
+      // Delete label mappings (cascade will handle this, but explicit is better)
+      await (database.delete(database.transactionLabelMappings)
+        ..where((tbl) => tbl.transactionId.equals(id))).go();
+      
+      // Delete the transaction
       await (database.delete(database.transactions)
         ..where((tbl) => tbl.id.equals(id))).go();
       

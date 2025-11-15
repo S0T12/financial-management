@@ -4,11 +4,14 @@ import 'package:financial_management/core/usecases/usecase.dart';
 import 'package:financial_management/domain/entities/transaction.dart';
 import 'package:financial_management/domain/usecases/account/get_all_accounts.dart';
 import 'package:financial_management/domain/usecases/transaction/create_transaction.dart';
+import 'package:financial_management/domain/usecases/transaction/update_transaction.dart';
+import 'package:financial_management/domain/usecases/label/get_all_labels.dart';
 import 'package:financial_management/presentation/providers/app_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class TransactionFormScreen extends ConsumerStatefulWidget {
   final Transaction? transaction;
@@ -31,6 +34,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
   TransactionCategory _selectedCategory = TransactionCategory.food;
   String? _selectedAccountId;
   DateTime _selectedDate = DateTime.now();
+  List<String> _selectedLabelIds = [];
   bool _isLoading = false;
   
   @override
@@ -43,6 +47,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
       _selectedCategory = widget.transaction!.category;
       _selectedAccountId = widget.transaction!.accountId;
       _selectedDate = widget.transaction!.dateTime;
+      _selectedLabelIds = widget.transaction!.labelIds ?? [];
     }
   }
   
@@ -54,15 +59,15 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
   }
   
   Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
+    final Jalali? picked = await showPersianDatePicker(
       context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
+      initialDate: Jalali.fromDateTime(_selectedDate),
+      firstDate: Jalali(1400, 1),
+      lastDate: Jalali.now(),
     );
     
-    if (picked != null && picked != _selectedDate) {
-      setState(() => _selectedDate = picked);
+    if (picked != null) {
+      setState(() => _selectedDate = picked.toDateTime());
     }
   }
   
@@ -84,20 +89,106 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
     setState(() => _isLoading = true);
     
     try {
-      final createTransaction = ref.read(createTransactionProvider);
+      final isEditing = widget.transaction != null;
       
-      final result = await createTransaction(CreateTransactionParams(
-        amount: int.parse(_amountController.text.trim()),
-        type: _selectedType,
-        accountId: _selectedAccountId!,
-        dateTime: _selectedDate,
-        category: _selectedCategory,
-        note: _noteController.text.trim().isEmpty 
-            ? null 
-            : _noteController.text.trim(),
-        imagePath: widget.transaction?.imagePath,
-        smsId: widget.transaction?.smsId,
-      ));
+      if (isEditing) {
+        // Update existing transaction
+        final updateTransaction = ref.read(updateTransactionProvider);
+        
+        final updatedTransaction = widget.transaction!.copyWith(
+          amount: int.parse(_amountController.text.trim()),
+          type: _selectedType,
+          accountId: _selectedAccountId,
+          dateTime: _selectedDate,
+          category: _selectedCategory,
+          note: _noteController.text.trim().isEmpty 
+              ? null 
+              : _noteController.text.trim(),
+          labelIds: _selectedLabelIds.isEmpty ? null : _selectedLabelIds,
+        );
+        
+        final result = await updateTransaction(UpdateTransactionParams(
+          transaction: updatedTransaction,
+        ));
+        
+        result.fold(
+          (failure) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(context.tr('error_saving_transaction')),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          (_) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(context.tr('transaction_updated_successfully')),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              Navigator.of(context).pop(true);
+            }
+          },
+        );
+      } else {
+        // Create new transaction
+        final createTransaction = ref.read(createTransactionProvider);
+        
+        final result = await createTransaction(CreateTransactionParams(
+          amount: int.parse(_amountController.text.trim()),
+          type: _selectedType,
+          accountId: _selectedAccountId!,
+          dateTime: _selectedDate,
+          category: _selectedCategory,
+          note: _noteController.text.trim().isEmpty 
+              ? null 
+              : _noteController.text.trim(),
+          labelIds: _selectedLabelIds.isEmpty ? null : _selectedLabelIds,
+        ));
+        
+        result.fold(
+          (failure) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(context.tr('error_saving_transaction')),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          (_) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(context.tr('transaction_saved_successfully')),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              Navigator.of(context).pop(true);
+            }
+          },
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(context.tr('error_saving_transaction')),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
       
       result.fold(
         (failure) {
@@ -282,30 +373,89 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
             
             const SizedBox(height: 16),
             
-            // Category Selection
-            DropdownButtonFormField<TransactionCategory>(
-              value: _selectedCategory,
-              decoration: InputDecoration(
-                labelText: context.tr('category'),
-                prefixIcon: Icon(_selectedCategory.icon),
-                border: const OutlineInputBorder(),
-              ),
-              items: TransactionCategory.values.map((category) {
-                return DropdownMenuItem(
-                  value: category,
-                  child: Row(
-                    children: [
-                      Icon(category.icon, size: 20, color: category.color),
-                      const SizedBox(width: 8),
-                      Text(context.tr(category.nameKey)),
-                    ],
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() => _selectedCategory = value);
+            // Label Selection
+            FutureBuilder(
+              future: ref.read(getAllLabelsProvider)(NoParams()),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const LinearProgressIndicator();
                 }
+                
+                if (snapshot.hasError) {
+                  return Text(
+                    context.tr('error_loading_labels'),
+                    style: const TextStyle(color: Colors.red),
+                  );
+                }
+                
+                return snapshot.data?.fold(
+                  (failure) => Text(
+                    context.tr('error_loading_labels'),
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  (labels) {
+                    if (labels.isEmpty) {
+                      return Card(
+                        color: Colors.blue.shade50,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                context.tr('no_labels_available'),
+                                style: TextStyle(color: Colors.blue.shade900),
+                              ),
+                              const SizedBox(height: 8),
+                              TextButton.icon(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/labels');
+                                },
+                                icon: const Icon(Icons.add),
+                                label: Text(context.tr('add_label')),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          context.tr('labels_optional'),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: labels.map((label) {
+                            final isSelected = _selectedLabelIds.contains(label.id);
+                            return FilterChip(
+                              label: Text(label.name),
+                              avatar: Icon(label.getIcon(), size: 18),
+                              selected: isSelected,
+                              selectedColor: label.getColor().withOpacity(0.3),
+                              onSelected: (selected) {
+                                setState(() {
+                                  if (selected) {
+                                    _selectedLabelIds.add(label.id);
+                                  } else {
+                                    _selectedLabelIds.remove(label.id);
+                                  }
+                                });
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    );
+                  },
+                ) ?? const SizedBox();
               },
             ),
             
@@ -321,7 +471,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
                   border: const OutlineInputBorder(),
                 ),
                 child: Text(
-                  '${_selectedDate.year}/${_selectedDate.month.toString().padLeft(2, '0')}/${_selectedDate.day.toString().padLeft(2, '0')}',
+                  Jalali.fromDateTime(_selectedDate).formatCompactDate(),
                 ),
               ),
             ),

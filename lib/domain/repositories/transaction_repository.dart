@@ -15,6 +15,7 @@ abstract class TransactionRepository {
     String? note,
     String? imagePath,
     String? smsId,
+    List<String>? labelIds,
   });
   
   /// Get transaction by ID

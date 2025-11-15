@@ -1,5 +1,6 @@
 import 'package:financial_management/core/localization/app_localizations.dart';
 import 'package:financial_management/domain/usecases/transaction/get_recent_transactions.dart';
+import 'package:financial_management/domain/usecases/transaction/delete_transaction.dart';
 import 'package:financial_management/presentation/providers/app_providers.dart';
 import 'package:financial_management/presentation/screens/transaction_form_screen.dart';
 import 'package:financial_management/presentation/widgets/transaction_list_item.dart';
@@ -117,6 +118,34 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                       if (result == true && mounted) {
                         setState(() {});
                       }
+                    },
+                    onDelete: () async {
+                      final deleteTransaction = ref.read(deleteTransactionProvider);
+                      final result = await deleteTransaction(DeleteTransactionParams(id: transaction.id));
+                      
+                      result.fold(
+                        (failure) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(context.tr('error_deleting_transaction')),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        (_) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(context.tr('transaction_deleted_successfully')),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            setState(() {});
+                          }
+                        },
+                      );
                     },
                   );
                 },

@@ -173,5 +173,10 @@
   "today": "امروز",
   "yesterday": "دیروز",
   "days_ago": "روز پیش",
-  "refresh": "بروزرسانی"
+  "refresh": "بروزرسانی",
+  "labels_optional": "برچسب‌ها (اختیاری)",
+  "no_labels_available": "هیچ برچسبی موجود نیست",
+  "error_loading_labels": "خطا در بارگذاری برچسب‌ها",
+  "error_deleting_transaction": "خطا در حذف تراکنش",
+  "invalid_amount": "مبلغ نامعتبر است"
 }

@@ -15,6 +15,7 @@ class CreateTransactionParams extends Equatable {
   final String? note;
   final String? imagePath;
   final String? smsId;
+  final List<String>? labelIds;
   
   const CreateTransactionParams({
     required this.amount,
@@ -25,6 +26,7 @@ class CreateTransactionParams extends Equatable {
     this.note,
     this.imagePath,
     this.smsId,
+    this.labelIds,
   });
   
   @override
@@ -37,6 +39,7 @@ class CreateTransactionParams extends Equatable {
     note,
     imagePath,
     smsId,
+    labelIds,
   ];
 }
 
@@ -57,6 +60,7 @@ class CreateTransaction implements UseCase<Transaction, CreateTransactionParams>
       note: params.note,
       imagePath: params.imagePath,
       smsId: params.smsId,
+      labelIds: params.labelIds,
     );
   }
 }

@@ -8,17 +8,19 @@ import 'package:financial_management/core/constants/category_constants.dart';
 import 'package:financial_management/data/datasources/local/tables/accounts_table.dart';
 import 'package:financial_management/data/datasources/local/tables/transactions_table.dart';
 import 'package:financial_management/data/datasources/local/tables/transfers_table.dart';
+import 'package:financial_management/data/datasources/local/tables/transaction_labels_table.dart';
+import 'package:financial_management/data/datasources/local/tables/transaction_label_mapping_table.dart';
 import 'package:financial_management/domain/entities/transaction.dart' as domain;
 
 part 'app_database.g.dart';
 
 /// Main database class for the application
-@DriftDatabase(tables: [Accounts, Transactions, Transfers])
+@DriftDatabase(tables: [Accounts, Transactions, Transfers, TransactionLabels, TransactionLabelMappings])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
   
   @override
-  int get schemaVersion => AppConstants.databaseVersion;
+  int get schemaVersion => 2;
   
   @override
   MigrationStrategy get migration {

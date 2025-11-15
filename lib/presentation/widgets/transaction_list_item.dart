@@ -6,12 +6,14 @@ class TransactionListItem extends StatelessWidget {
   final Transaction transaction;
   final String locale;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
   
   const TransactionListItem({
     super.key,
     required this.transaction,
     required this.locale,
     this.onTap,
+    this.onDelete,
   });
   
   @override
@@ -20,58 +22,97 @@ class TransactionListItem extends StatelessWidget {
     
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          width: 48,
-          height: 48,
+      child: Dismissible(
+        key: Key(transaction.id),
+        direction: DismissDirection.endToStart,
+        background: Container(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 20),
           decoration: BoxDecoration(
-            color: transaction.category.color.withOpacity(0.1),
+            color: Colors.red,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            transaction.category.icon,
-            color: transaction.category.color,
-            size: 24,
-          ),
+          child: const Icon(Icons.delete, color: Colors.white),
         ),
-        title: Text(
-          transaction.note ?? transaction.category.name,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          DateTimeUtils.toJalaliWithTime(transaction.dateTime),
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 13,
-          ),
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              '${isIncome ? '+' : '-'} ${NumberUtils.formatCurrency(transaction.amount, locale: locale)}',
-              style: TextStyle(
-                color: isIncome ? Colors.green[600] : Colors.red[600],
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+        confirmDismiss: (direction) async {
+          return await showDialog<bool>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('حذف تراکنش'),
+                content: const Text('آیا از حذف این تراکنش اطمینان دارید؟'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('لغو'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('حذف', style: TextStyle(color: Colors.red)),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        onDismissed: (direction) {
+          if (onDelete != null) {
+            onDelete!();
+          }
+        },
+        child: ListTile(
+          onTap: onTap,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: transaction.category.color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
-            Text(
-              locale == 'fa' ? 'ریال' : 'Rial',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 11,
-              ),
+            child: Icon(
+              transaction.category.icon,
+              color: transaction.category.color,
+              size: 24,
             ),
-          ],
+          ),
+          title: Text(
+            transaction.note ?? transaction.category.name,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(
+            DateTimeUtils.toJalaliWithTime(transaction.dateTime),
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 13,
+            ),
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '${isIncome ? '+' : '-'} ${NumberUtils.formatCurrency(transaction.amount, locale: locale)}',
+                style: TextStyle(
+                  color: isIncome ? Colors.green[600] : Colors.red[600],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                locale == 'fa' ? 'ریال' : 'Rial',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
